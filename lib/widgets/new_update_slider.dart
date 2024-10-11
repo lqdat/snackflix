@@ -23,7 +23,8 @@ class NewUpdateSlider extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => DetailMoiveScreens(
-                        snapshot.data[itemIndex], // Removed 'const' from here
+                        
+                        snapshot.data![itemIndex].slug // Removed 'const' from here
                   ),
                 ),
               );

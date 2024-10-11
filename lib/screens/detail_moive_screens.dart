@@ -1,12 +1,8 @@
 // ignore_for_file: prefer_const_constructors, deprecated_member_use
 
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieproject/models/detail_movie.dart';
-import 'package:movieproject/models/movies.dart';
-import 'package:movieproject/widgets/back_button.dart';
 import 'package:movieproject/widgets/play_video.dart';
 
 import '../api/movieapi.dart';
@@ -20,10 +16,52 @@ class DetailMoiveScreens extends StatefulWidget {
 
 class _DetailMoiveScreens extends State<DetailMoiveScreens> {
   late Future<DetailMovie> detailMovie;
+   List<ServerData>? listLink;
   @override
   void initState() {
     super.initState();
     detailMovie = MovieApi().getDetailMovie(widget.movies_slug);
+    getLinks();
+  }
+
+  Future<void> getLinks() async {
+    List<ServerData> rs = await MovieApi().getLinkMovie(widget.movies_slug);
+
+    setState(() {
+      listLink = rs;
+    });
+
+    if (rs[0].link_m3u8.isEmpty) {
+      _showMyDialog();
+    }
+  }
+
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Không thể tải phim '),
+          content: const SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('Phim chưa có nguồn ! '),
+                Text('Vui lòng đợi khi có cập nhật mới !'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Quay lại'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -32,7 +70,7 @@ class _DetailMoiveScreens extends State<DetailMoiveScreens> {
         body: FutureBuilder(
             future: detailMovie,
             builder: (context, snapshot) {
-              if (snapshot.hasData) {
+              if (snapshot.hasData && listLink!=null) {
                 return Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -112,44 +150,65 @@ class _DetailMoiveScreens extends State<DetailMoiveScreens> {
                                     ),
                                   ),
                                   Center(
-                                      child: Container(
-                                          
-                                          margin:
-                                              const EdgeInsets.only(top: 12),
-                                          
-                                          child: IconButton(
-                                            icon: Image.asset(
-                                                'assets/images/play.png',
-                                                width: 50,
-                                                height: 50),
-                                            onPressed: () => Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) => PlayVideo(
-                                                    snapshot.data!.slug),
-                                              ),
+                                    child: Container(
+                                        margin: const EdgeInsets.only(top: 12),
+                                        child: IconButton(
+                                          icon: Image.asset(
+                                              'assets/images/play.png',
+                                              width: 50,
+                                              height: 50),
+                                          onPressed: () => Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => PlayVideo(
+                                                  snapshot.data!.slug,"",0),
                                             ),
-
-                                            // InkWell(
-                                            //     highlightColor: Colors.transparent,
-                                            //     onTap: () => Navigator.push(
-                                            //           context,
-                                            //           MaterialPageRoute(
-                                            //             builder: (context) =>
-                                            //                 PlayVideo(snapshot.data!.slug),
-                                            //           ),
-                                            //         ),
-                                            //     child: Ink(
-                                            //       child: Align(
-                                            //         alignment: Alignment.center,
-                                            //         child: Image.asset(
-                                            //             'assets/images/play.png',
-                                            //             width: 50,
-                                            //             height: 30),
-                                            //       ),
-                                            //     )),
-                                          ))),
-
+                                          ),
+                                        )),
+                                  ),
+                                  SizedBox(
+                                    height: 8,
+                                  ),
+                                  (listLink!.length > 1 && snapshot.data!.type!="single")
+                                      ? SizedBox(
+                                          height: 40,
+                                          child: ListView.builder(
+                                              shrinkWrap: true,
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: listLink?.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(3),
+                                                  child: Container(
+                                                    
+                                                    color: Colors.grey.shade900,
+                                                    child: InkWell(
+                                                        focusColor: Colors
+                                                            .grey.shade300,
+                                                        onTap: () {
+                                                          Navigator.push(
+                                            context,
+                                                          MaterialPageRoute(
+                                              builder: (context) => PlayVideo(
+                                                  snapshot.data!.slug,listLink![index].link_m3u8,index),
+                                            ));
+                                                        },
+                                                        child: Ink(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(8.0),
+                                                            child: Text(
+                                                                (index+1).toString()))),
+                                                  ),
+                                                );
+                                              }))
+                                      : SizedBox(),
+                                  SizedBox(
+                                    height: 8,
+                                  ),    
                                   Text(
                                     'Nội dung',
                                     style: GoogleFonts.openSans(

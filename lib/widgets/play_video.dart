@@ -1,17 +1,17 @@
 import 'dart:developer';
-import 'dart:math';
 
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:movieproject/api/movieapi.dart';
 import 'package:movieproject/models/detail_movie.dart';
-import 'package:movieproject/models/movies.dart';
 import 'package:movieproject/widgets/back_button.dart';
 import 'package:video_player/video_player.dart';
 
 class PlayVideo extends StatefulWidget {
   String Slug;
-   PlayVideo(this.Slug,{super.key});
+  String link;
+  int episode;
+  PlayVideo(this.Slug, this.link, this.episode, {super.key});
 
   @override
   State<StatefulWidget> createState() {
@@ -23,13 +23,12 @@ class _PlayVideoState extends State<PlayVideo> {
   late VideoPlayerController _videoPlayerController1;
   ChewieController? _chewieController;
   int? bufferDelay;
-  late ServerData linkMovies;
+   List<ServerData>? ListLinks;
   bool hasMovie = false;
   @override
   void initState() {
     super.initState();
     getLink();
-    
   }
 
   @override
@@ -40,48 +39,22 @@ class _PlayVideoState extends State<PlayVideo> {
   }
 
   Future<void> getLink() async {
-    ServerData rs = await MovieApi()
-        .getLinkMovie(widget.Slug);
+    List<ServerData> rs = await MovieApi().getLinkMovie(widget.Slug);
     setState(() {
-      linkMovies = rs;
+      ListLinks = rs;
     });
-    if(rs.link_m3u8.isEmpty){
-_showMyDialog();
-    }else{
+//     if(rs[0].link_m3u8.isEmpty){
+// _showMyDialog();
+//     }else{
 
-    initializePlayer();
-    }
+    initializePlayer(widget.episode);
+//     }
   }
-Future<void> _showMyDialog() async {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false, // user must tap button!
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Không thể tải phim '),
-        content: const SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text('Phim chưa có nguồn ! '),
-              Text('Vui lòng đợi khi có cập nhật mới !'),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Quay lại'),
-            onPressed: () {
-              int count = 0;
-              Navigator.of(context).popUntil((_) => count++ >= 2);
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-  Future<void> initializePlayer() async {
-    _videoPlayerController1 = VideoPlayerController.network(linkMovies.link_m3u8);
+
+  Future<void> initializePlayer(int episode) async {
+    log('$episode');
+    _videoPlayerController1 =
+        VideoPlayerController.network(ListLinks![episode].link_m3u8);
 
     await Future.wait([_videoPlayerController1.initialize()]);
 
@@ -215,12 +188,23 @@ Future<void> _showMyDialog() async {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: BackBtn(false),
+        leadingWidth: 400,
+        leading: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            BackBtn(false),
+            Container(
+              margin: const EdgeInsets.only(top: 14),
+              child: Text('Tập ${widget.episode + 1}'),
+            )
+          ],
+        ),
         backgroundColor: Colors.transparent,
       ),
       body: Column(
         children: <Widget>[
           Expanded(
+            flex: 12,
             child: Center(
               child: _chewieController != null &&
                       _chewieController!
@@ -238,15 +222,38 @@ Future<void> _showMyDialog() async {
                     ),
             ),
           ),
-          Align(
-            alignment: Alignment.bottomRight,
-            child: TextButton(
-              onPressed: () {
-                _chewieController?.enterFullScreen();
-              },
-              child: const Text('Phóng to'),
-            ),
-          )
+          Expanded(
+              flex: 1,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                 (ListLinks!=null&& ListLinks!.length > 1)
+                      ? TextButton.icon(
+                          iconAlignment: IconAlignment.end,
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PlayVideo(
+                                      widget.Slug, "", widget.episode + 1),
+                                ));
+                          },
+                          label: const Text('Tập tiếp theo'),
+                          icon: Icon(Icons.skip_next),
+                        )
+                      : SizedBox(),
+                  TextButton.icon(
+                    iconAlignment: IconAlignment.end,
+                    onPressed: () {
+                      _chewieController?.enterFullScreen();
+                    },
+                    label: const Text('Phóng to'),
+                    icon: Icon(Icons.zoom_out_map),
+                  ),
+                ],
+              ))
         ],
       ),
     );

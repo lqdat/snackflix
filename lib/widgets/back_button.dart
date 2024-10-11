@@ -22,7 +22,6 @@ class BackBtn extends StatelessWidget {
       child: IconButton(
         focusColor: Colors.blueGrey.shade900,
         onPressed: () {
-        
           Navigator.pop(context);
         },
         icon:  Icon(!isCancel? Icons.arrow_back_rounded:Icons.keyboard_arrow_left_outlined),

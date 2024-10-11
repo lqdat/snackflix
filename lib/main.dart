@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:movieproject/screens/list_movie_cartoon.dart';
+import 'package:movieproject/screens/list_movie_new.dart';
+import 'package:movieproject/screens/list_movie_series.dart';
+import 'package:movieproject/screens/list_movie_single.dart';
+import 'package:movieproject/screens/list_movie_tvshow.dart';
 import 'package:movieproject/screens/splash.dart';
 import 'colors.dart';
 
@@ -26,6 +31,13 @@ class MyApp extends StatelessWidget {
         scaffoldBackgroundColor: Colours.scaffoldBGColor,
       ),
       home: SplashScreen(),
+      routes:{
+        'newMovie': (context) => ListMovieNew(),
+        'singleMovie': (context) => ListMovieSingle(),
+        'serieMovie': (context) => ListMovieSeries(),
+        'tvShow': (context) => ListMovieTvshow(),
+        'cartoonMovie': (context) => ListMovieCartoon(),
+      } ,
     ));
   }
 }

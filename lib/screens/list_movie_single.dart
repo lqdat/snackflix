@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieproject/api/movieapi.dart';
-import 'package:movieproject/models/movies.dart';
 import 'package:movieproject/models/single_movie.dart';
 import 'package:movieproject/screens/detail_moive_screens.dart';
 
-class ListMovie extends StatefulWidget {
-  const ListMovie({super.key});
+class ListMovieSingle extends StatefulWidget {
+  const ListMovieSingle({super.key});
 
   @override
-  _ListMovieState createState() => _ListMovieState();
+  _ListMovieSingleState createState() => _ListMovieSingleState();
 }
 
-class _ListMovieState extends State<ListMovie> {
+class _ListMovieSingleState extends State<ListMovieSingle> {
   late List<SingleMovie> listMovies = [];
   late int page = 1;
   bool isLoading = false;
@@ -42,7 +41,7 @@ class _ListMovieState extends State<ListMovie> {
               backgroundColor: Colors.transparent,
               elevation: 0,
               title: Text(
-                'SnackFlix',
+                'Phim lẻ',
                 style: GoogleFonts.aBeeZee(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -89,6 +88,7 @@ class _ListMovieState extends State<ListMovie> {
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             DetailMoiveScreens(
+                                            
                                           listMovies[index]
                                               .slug, // Removed 'const' from here
                                         ),

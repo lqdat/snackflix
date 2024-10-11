@@ -6,8 +6,12 @@ class MovieSlide extends StatelessWidget {
   const MovieSlide({
     super.key,
     required this.snapshot,
+     required this.isImage,
+     required this.route,
   });
   final AsyncSnapshot snapshot;
+  final bool isImage;
+  final String route;
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -28,7 +32,10 @@ class MovieSlide extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DetailMoiveScreens(
+                        builder: (context) => 
+                        
+                        DetailMoiveScreens(
+                          
                           snapshot
                               .data![index].slug, // Removed 'const' from here
                         ),
@@ -45,7 +52,7 @@ class MovieSlide extends StatelessWidget {
                             child: Image.network(
                               filterQuality: FilterQuality.high,
                               fit: BoxFit.cover,
-                              '${snapshot.data![index].poster_url}',
+                              isImage ?'${snapshot.data![index].poster_url}' :'https://phimimg.com/${snapshot.data![index].poster_url}',
                             ),
                           ))))
               : InkWell(
@@ -54,14 +61,10 @@ class MovieSlide extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => DetailMoiveScreens(
-                    //       snapshot.data[index], // Removed 'const' from here
-                    //     ),
-                    //   ),
-                    // );
+                    Navigator.pushNamed(
+                      context,
+                      '$route'
+                    );
                   },
                   child: Padding(
                       padding: EdgeInsets.all(8),

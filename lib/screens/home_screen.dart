@@ -2,18 +2,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:movieproject/api/api.dart';
 import 'package:movieproject/api/movieapi.dart';
-import 'package:movieproject/api/sapi.dart';
-import 'package:movieproject/models/movie.dart';
 import 'package:movieproject/models/movies.dart';
-import 'package:movieproject/models/series.dart';
+import 'package:movieproject/models/single_movie.dart';
 import 'package:movieproject/screens/menu_wiget.dart';
-import 'package:movieproject/widgets/movie_slide.dart';
-import '../widgets/movies_slider.dart';
+import 'package:movieproject/widgets/movie_slider.dart';
 import 'package:movieproject/widgets/multi_search.dart';
-import '../widgets/trending_slider.dart';
-import '../widgets/trending_slider_series.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -29,24 +23,21 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late Future<List<Movie>> trendingMovies;
-  late Future<List<Movie>> topRatedMovies;
-  late Future<List<Movie>> upcomingMovies;
-  late Future<List<Series>> trendingSeries;
-  late Future<List<Series>> topRatedSeries;
-  late Future<List<Series>> popularSeries;
+  late Future<List<SingleMovie>> singleMovie;
+  late Future<List<SingleMovie>> seriesMovie;
+  late Future<List<SingleMovie>> tvShowMoive;
+  late Future<List<SingleMovie>> cartoonMoive;
+
   late Future<List<Movies>> newMovies;
 
   @override
   void initState() {
     super.initState();
-    trendingMovies = Api().getTrendingMovies();
-    topRatedMovies = Api().getTopRatedMovies();
-    upcomingMovies = Api().getUpcomingMovies();
-    trendingSeries = SApi().getTrendingSeries();
-    topRatedSeries = SApi().getTopRatedSeries();
-    popularSeries = SApi().getPopularSeries();
-    newMovies = MovieApi().getNewUpdateMovies();
+    singleMovie = MovieApi().getSingleMovies(1);
+    seriesMovie = MovieApi().getSeriesMovies(1);
+    tvShowMoive = MovieApi().getTvShowMovies(1);
+    cartoonMoive = MovieApi().getCarToonMovies(1);
+    newMovies = MovieApi().getNewUpdateMovies(1);
   }
 
   @override
@@ -108,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(snapshot.error.toString()),
                         );
                       } else if (snapshot.hasData) {
-                        return MovieSlide(snapshot: snapshot);
+                        return MovieSlide(snapshot: snapshot,isImage: true,route: 'newupdate',);
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(),
@@ -117,19 +108,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                SectionTitle('Phim thịnh hành'),
-               
-                SectionTitle('Top phim hay'),
+                SectionTitle('Phim lẻ'),
                 SizedBox(
                   child: FutureBuilder(
-                    future: topRatedMovies,
+                    future: singleMovie,
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
                         return Center(
                           child: Text(snapshot.error.toString()),
                         );
                       } else if (snapshot.hasData) {
-                        return MoviesSlider(snapshot: snapshot);
+                        return MovieSlide(snapshot: snapshot,isImage: false,route: 'singleMovie',);
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(),
@@ -138,14 +127,63 @@ class _HomeScreenState extends State<HomeScreen> {
                     },
                   ),
                 ),
-                
-                
-                SectionTitle('Phim truyền hình thịnh hành'),
-                
-                SectionTitle('Top phim truyền hình'),
-               
-                SectionTitle('Phim truyền hình nổi tiếng'),
-                
+                SectionTitle('Phim bộ'),
+                SizedBox(
+                  child: FutureBuilder(
+                    future: seriesMovie,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(snapshot.error.toString()),
+                        );
+                      } else if (snapshot.hasData) {
+                        return MovieSlide(snapshot: snapshot,isImage: false,route: 'serieMovie',);
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                ),
+                SectionTitle('TV Shows'),
+                SizedBox(
+                  child: FutureBuilder(
+                    future: tvShowMoive,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(snapshot.error.toString()),
+                        );
+                      } else if (snapshot.hasData) {
+                        return MovieSlide(snapshot: snapshot,isImage: false,route: 'tvShow',);
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                ),
+                SectionTitle('Phim hoạt hình'),
+                SizedBox(
+                  child: FutureBuilder(
+                    future: cartoonMoive,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(snapshot.error.toString()),
+                        );
+                      } else if (snapshot.hasData) {
+                        return MovieSlide(snapshot: snapshot,isImage: false,route: 'cartoonMovie',);
+                      } else {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -183,16 +221,15 @@ class SectionTitle extends StatelessWidget {
         //   height: 10,
         // ),
         Expanded(
-          flex: 25,
-          child: Text(
-          title,
-          style: GoogleFonts.aBeeZee(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
-        ))
-        
+            flex: 25,
+            child: Text(
+              title,
+              style: GoogleFonts.aBeeZee(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ))
       ],
     );
   }
