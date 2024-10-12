@@ -168,6 +168,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
+  jumping_dot:
+    dependency: "direct main"
+    description:
+      name: jumping_dot
+      sha256: "031d8f45a41b95df7d7438f7ce5f3105503cbe5432b6c9dd10cf9b6f0a8d6472"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.7"
   leak_tracker:
     dependency: transitive
     description:

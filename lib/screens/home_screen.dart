@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieproject/api/movieapi.dart';
@@ -99,7 +101,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(snapshot.error.toString()),
                         );
                       } else if (snapshot.hasData) {
-                        return MovieSlide(snapshot: snapshot,isImage: true,route: 'newupdate',);
+                        
+                        return MovieSlide(
+                          snapshot: snapshot,
+                          isImage: true,
+                          route: 'newMovie',
+                        );
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(),
@@ -118,7 +125,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(snapshot.error.toString()),
                         );
                       } else if (snapshot.hasData) {
-                        return MovieSlide(snapshot: snapshot,isImage: false,route: 'singleMovie',);
+                        return MovieSlide(
+                          snapshot: snapshot,
+                          isImage: false,
+                          route: 'singleMovie',
+                        );
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(),
@@ -137,7 +148,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(snapshot.error.toString()),
                         );
                       } else if (snapshot.hasData) {
-                        return MovieSlide(snapshot: snapshot,isImage: false,route: 'serieMovie',);
+                        return MovieSlide(
+                          snapshot: snapshot,
+                          isImage: false,
+                          route: 'serieMovie',
+                        );
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(),
@@ -156,7 +171,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(snapshot.error.toString()),
                         );
                       } else if (snapshot.hasData) {
-                        return MovieSlide(snapshot: snapshot,isImage: false,route: 'tvShow',);
+                        return MovieSlide(
+                          snapshot: snapshot,
+                          isImage: false,
+                          route: 'tvShow',
+                        );
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(),
@@ -175,7 +194,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           child: Text(snapshot.error.toString()),
                         );
                       } else if (snapshot.hasData) {
-                        return MovieSlide(snapshot: snapshot,isImage: false,route: 'cartoonMovie',);
+                        return MovieSlide(
+                          snapshot: snapshot,
+                          isImage: false,
+                          route: 'cartoonMovie',
+                        );
                       } else {
                         return const Center(
                           child: CircularProgressIndicator(),

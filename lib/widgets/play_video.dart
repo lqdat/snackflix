@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
+import 'package:jumping_dot/jumping_dot.dart';
 import 'package:movieproject/api/movieapi.dart';
+import 'package:movieproject/colors.dart';
 import 'package:movieproject/models/detail_movie.dart';
+import 'package:movieproject/screens/detail_moive_screens.dart';
 import 'package:movieproject/widgets/back_button.dart';
 import 'package:video_player/video_player.dart';
 
@@ -23,7 +27,7 @@ class _PlayVideoState extends State<PlayVideo> {
   late VideoPlayerController _videoPlayerController1;
   ChewieController? _chewieController;
   int? bufferDelay;
-   List<ServerData>? ListLinks;
+  List<ServerData>? ListLinks;
   bool hasMovie = false;
   @override
   void initState() {
@@ -40,6 +44,7 @@ class _PlayVideoState extends State<PlayVideo> {
 
   Future<void> getLink() async {
     List<ServerData> rs = await MovieApi().getLinkMovie(widget.Slug);
+
     setState(() {
       ListLinks = rs;
     });
@@ -47,12 +52,11 @@ class _PlayVideoState extends State<PlayVideo> {
 // _showMyDialog();
 //     }else{
 
-    initializePlayer(widget.episode);
+    await initializePlayer(widget.episode);
 //     }
   }
 
   Future<void> initializePlayer(int episode) async {
-    log('$episode');
     _videoPlayerController1 =
         VideoPlayerController.network(ListLinks![episode].link_m3u8);
 
@@ -122,7 +126,7 @@ class _PlayVideoState extends State<PlayVideo> {
       aspectRatio: 16 / 9,
       progressIndicatorDelay:
           bufferDelay != null ? Duration(milliseconds: bufferDelay!) : null,
-// showControls: false,
+
       // materialProgressColors: ChewieProgressColors(
       //   playedColor: Colors.red,
       //   handleColor: Colors.blue,
@@ -156,20 +160,6 @@ class _PlayVideoState extends State<PlayVideo> {
       // ),
 
       hideControlsTimer: const Duration(seconds: 5),
-
-      // Try playing around with some of these other options:
-
-      // showControls: false,
-      // materialProgressColors: ChewieProgressColors(
-      //   playedColor: Colors.red,
-      //   handleColor: Colors.blue,
-      //   backgroundColor: Colors.grey,
-      //   bufferedColor: Colors.lightGreen,
-      // ),
-      // placeholder: Container(
-      //   color: Colors.grey,
-      // ),
-      // autoInitialize: true,
     );
   }
 
@@ -192,10 +182,36 @@ class _PlayVideoState extends State<PlayVideo> {
         leading: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            BackBtn(false),
+            Container(
+              height: 70,
+              width: 70,
+              margin: const EdgeInsets.only(top: 16, left: 16),
+              decoration: BoxDecoration(
+                  color: Colours.scaffoldBGColor,
+                  borderRadius: BorderRadius.circular(8)),
+              child: IconButton(
+                focusColor: Colors.blueGrey.shade900,
+                onPressed: () {
+                  _videoPlayerController1.dispose();
+                  _chewieController?.dispose();
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailMoiveScreens(
+                        widget.Slug, // Removed 'const' from here
+                      ),
+                    ),
+                  );
+                  ;
+                },
+                icon: Icon(Icons.arrow_back_rounded),
+              ),
+            ),
             Container(
               margin: const EdgeInsets.only(top: 14),
-              child: Text('Tập ${widget.episode + 1}'),
+              child: ListLinks != null
+                  ? Text('${ListLinks![widget.episode].name}')
+                  : Text(''),
             )
           ],
         ),
@@ -212,10 +228,14 @@ class _PlayVideoState extends State<PlayVideo> {
                   ? Chewie(
                       controller: _chewieController!,
                     )
-                  : const Column(
+                  : Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        CircularProgressIndicator(),
+                        JumpingDots(
+                            color: Colors.yellow,
+                            radius: 10,
+                            numberOfDots: 3,
+                            animationDuration: Duration(milliseconds: 200)),
                         SizedBox(height: 20),
                         Text('Loading'),
                       ],
@@ -229,7 +249,9 @@ class _PlayVideoState extends State<PlayVideo> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                 (ListLinks!=null&& ListLinks!.length > 1)
+                  (ListLinks != null &&
+                          ListLinks!.length > 1 &&
+                          ListLinks!.length > widget.episode + 1)
                       ? TextButton.icon(
                           iconAlignment: IconAlignment.end,
                           onPressed: () {

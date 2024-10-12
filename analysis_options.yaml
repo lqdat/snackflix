@@ -14,6 +14,7 @@ analyzer:
     must_be_immutable: ignore
     non_constant_identifier_names: ignore
     prefer_const_constructors: ignore
+    unnecessary_null_comparison: ignore
     unnecessary_string_interpolations: ignore
 include: package:flutter_lints/flutter.yaml
 

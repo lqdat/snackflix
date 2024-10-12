@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jumping_dot/jumping_dot.dart';
 import 'package:movieproject/api/movieapi.dart';
 import 'package:movieproject/models/movies.dart';
 import 'package:movieproject/screens/detail_moive_screens.dart';
@@ -70,7 +71,7 @@ class _ListMovieNewState extends State<ListMovieNew> {
                       Expanded(
                           flex: 1,
                           child: GridView.count(
-                              crossAxisCount: 5, // decides number of columns
+                              crossAxisCount: MediaQuery.of(context).size.width>600 ?5:2, // decides number of columns
                               padding: const EdgeInsets.all(5),
                               crossAxisSpacing: 5,
                               mainAxisSpacing: 5,
@@ -80,15 +81,14 @@ class _ListMovieNewState extends State<ListMovieNew> {
                                   autofocus: true,
                                   focusColor: Colors.blueGrey.shade300,
                                   customBorder: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
                                   onTap: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
                                             DetailMoiveScreens(
-                                             
                                           listMovies[index]
                                               .slug, // Removed 'const' from here
                                         ),
@@ -106,6 +106,25 @@ class _ListMovieNewState extends State<ListMovieNew> {
                                           borderRadius:
                                               BorderRadius.circular(8.0),
                                           child: Image.network(
+                                            // loadingBuilder: (context, child,
+                                            //     loadingProgress) {
+                                            //   if (loadingProgress == null) {
+                                            //     return child;
+                                            //   }
+                                            //   return Center(
+                                            //     child:
+                                            //         CircularProgressIndicator(
+                                            //       value: loadingProgress
+                                            //                   .expectedTotalBytes !=
+                                            //               null
+                                            //           ? loadingProgress
+                                            //                   .cumulativeBytesLoaded /
+                                            //               loadingProgress
+                                            //                   .expectedTotalBytes!
+                                            //           : null,
+                                            //     ),
+                                            //   );
+                                            // },
                                             filterQuality: FilterQuality.medium,
                                             fit: BoxFit.fill,
                                             width: 150,
@@ -114,10 +133,13 @@ class _ListMovieNewState extends State<ListMovieNew> {
                                           ),
                                         ),
                                       ),
-
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text(listMovies[index].name),
+                                        child: Text(listMovies[index].name ,style: GoogleFonts.openSans(
+                                    fontSize: 12,
+                                    
+                                    color: Colors.white,
+                                  ),),
                                       )
                                     ],
                                   ),
@@ -137,7 +159,8 @@ class _ListMovieNewState extends State<ListMovieNew> {
                                   getNewList(page);
                                 }
                               },
-                              child: const Text('Trang trước'),
+                              child:MediaQuery.of(context).size.width>360?  Text('Trang trước',
+                              ):Icon(Icons.navigate_before),
                             ),
                           )),
                           Expanded(
@@ -163,7 +186,8 @@ class _ListMovieNewState extends State<ListMovieNew> {
                                 });
                                 getNewList(page);
                               },
-                              child: const Text('Trang tiếp theo'),
+                              child: MediaQuery.of(context).size.width>360?  Text('Trang tiếp theo',
+                              ):Icon(Icons.navigate_next),
                             ),
                           )),
                         ],
@@ -172,36 +196,36 @@ class _ListMovieNewState extends State<ListMovieNew> {
                   ),
                 ),
               )
-            : const Center(
-                child: CircularProgressIndicator(),
+            :  Center(
+                child: JumpingDots(
+                      color: Colors.yellow,
+                      radius: 10,
+                      numberOfDots: 3,
+                      animationDuration: Duration(milliseconds: 200)),
               ));
   }
 
   Future<List<Movies>> getList(int page) async {
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
-     await MovieApi().getNewUpdateMovies(page).then((value)=>
-    setState(() {
-      listMovies = value;
-      isLoading=false;
-    })
-    );
-    
+    await MovieApi().getNewUpdateMovies(page).then((value) => setState(() {
+          listMovies = value;
+          isLoading = false;
+        }));
+
     return listMovies;
   }
 
   Future<List<Movies>> getNewList(int page) async {
     setState(() {
-      isLoading=true;
+      isLoading = true;
     });
-     await MovieApi().getNewUpdateMovies(page).then((value)=>
-    setState(() {
-      listMovies = value;
-      isLoading=false;
-    })
-    );
-    
+    await MovieApi().getNewUpdateMovies(page).then((value) => setState(() {
+          listMovies = value;
+          isLoading = false;
+        }));
+
     return listMovies;
   }
 }

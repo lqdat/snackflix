@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:movieproject/models/detail_movie.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -17,9 +19,22 @@ class MovieApi {
       'https://phimapi.com/v1/api/danh-sach/tv-shows?page=';
       static const _cartoonMovieURL =
       'https://phimapi.com/v1/api/danh-sach/hoat-hinh?page=';
+      static const _searchMovieURL =
+      'https://phimapi.com/v1/api/tim-kiem?keyword=';
 
   static const _detailUrl =
       'https://phimapi.com/phim/';
+
+Future<List<Movies>> getSearchMovies(String keyword) async {
+    final response = await http.get(Uri.parse('$_searchMovieURL$keyword'));
+    if (response.statusCode == 200) {
+      final decodedData = json.decode(response.body)['data']['items'] as List;
+      var rs= decodedData.map((movie) => Movies.fromJson(movie)).toList();
+      return rs;
+    } else {
+      throw Exception('Không thể lấy dữ liệu');
+    }
+  }
 
   Future<List<Movies>> getNewUpdateMovies(int page) async {
     final response = await http.get(Uri.parse('$_newUpdateURL$page'));

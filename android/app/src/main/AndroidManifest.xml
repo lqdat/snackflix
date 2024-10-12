@@ -5,9 +5,11 @@
         android:name="${applicationName}"
         android:banner="@mipmap/banner"
         android:icon="@mipmap/banner">
-        
+         <!-- Đổi lại .MainActivity  nếu chạy điện thoại -->
         <activity
+           
             android:name=".MainActivity"
+            
             android:usesCleartextTraffic="true"
             android:exported="true"
             android:launchMode="singleTop"
@@ -35,6 +37,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            
     </application>
     <uses-feature android:name="android.software.leanback"
         android:required="false" />

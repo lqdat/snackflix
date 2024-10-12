@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jumping_dot/jumping_dot.dart';
 import 'package:movieproject/api/movieapi.dart';
 import 'package:movieproject/models/single_movie.dart';
 import 'package:movieproject/screens/detail_moive_screens.dart';
@@ -70,7 +71,7 @@ class _ListMovieSingleState extends State<ListMovieSingle> {
                       Expanded(
                           flex: 1,
                           child: GridView.count(
-                              crossAxisCount: 5, // decides number of columns
+                              crossAxisCount: MediaQuery.of(context).size.width>600 ?5:2, // decides number of columns
                               padding: const EdgeInsets.all(5),
                               crossAxisSpacing: 5,
                               mainAxisSpacing: 5,
@@ -124,7 +125,7 @@ class _ListMovieSingleState extends State<ListMovieSingle> {
                                   ),
                                 );
                               }))),
-                      Row(
+                       Row(
                         children: [
                           Expanded(
                               child: Align(
@@ -138,7 +139,8 @@ class _ListMovieSingleState extends State<ListMovieSingle> {
                                   getNewList(page);
                                 }
                               },
-                              child: const Text('Trang trước'),
+                              child:MediaQuery.of(context).size.width>360?  Text('Trang trước',
+                              ):Icon(Icons.navigate_before),
                             ),
                           )),
                           Expanded(
@@ -164,7 +166,8 @@ class _ListMovieSingleState extends State<ListMovieSingle> {
                                 });
                                 getNewList(page);
                               },
-                              child: const Text('Trang tiếp theo'),
+                              child: MediaQuery.of(context).size.width>360?  Text('Trang tiếp theo',
+                              ):Icon(Icons.navigate_next),
                             ),
                           )),
                         ],
@@ -173,8 +176,12 @@ class _ListMovieSingleState extends State<ListMovieSingle> {
                   ),
                 ),
               )
-            : const Center(
-                child: CircularProgressIndicator(),
+            :  Center(
+                child: JumpingDots(
+                      color: Colors.yellow,
+                      radius: 10,
+                      numberOfDots: 3,
+                      animationDuration: Duration(milliseconds: 200)),
               ));
   }
 

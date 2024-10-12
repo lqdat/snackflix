@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:movieproject/screens/detail_moive_screens.dart';
@@ -29,6 +31,7 @@ class MovieSlide extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   onTap: () {
+                   
                     Navigator.push(
                       context,
                       MaterialPageRoute(

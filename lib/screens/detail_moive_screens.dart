@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:jumping_dot/jumping_dot.dart';
 import 'package:movieproject/models/detail_movie.dart';
 import 'package:movieproject/widgets/play_video.dart';
 
@@ -16,7 +17,8 @@ class DetailMoiveScreens extends StatefulWidget {
 
 class _DetailMoiveScreens extends State<DetailMoiveScreens> {
   late Future<DetailMovie> detailMovie;
-   List<ServerData>? listLink;
+  List<ServerData>? listLink;
+
   @override
   void initState() {
     super.initState();
@@ -70,7 +72,7 @@ class _DetailMoiveScreens extends State<DetailMoiveScreens> {
         body: FutureBuilder(
             future: detailMovie,
             builder: (context, snapshot) {
-              if (snapshot.hasData && listLink!=null) {
+              if (snapshot.hasData && listLink != null) {
                 return Container(
                   decoration: BoxDecoration(
                     image: DecorationImage(
@@ -114,11 +116,28 @@ class _DetailMoiveScreens extends State<DetailMoiveScreens> {
                                       borderRadius: BorderRadius.circular(10),
                                       child: Container(
                                         width:
-                                            MediaQuery.of(context).size.width *
-                                                0.5,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.6,
+                                            MediaQuery.of(context).size.width >
+                                                    360
+                                                ? MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.5
+                                                : MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.8,
+                                        height: MediaQuery.of(context)
+                                                    .size
+                                                    .height >
+                                                640
+                                            ? MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.6
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.25,
                                         decoration: BoxDecoration(
                                           boxShadow: [
                                             BoxShadow(
@@ -161,7 +180,7 @@ class _DetailMoiveScreens extends State<DetailMoiveScreens> {
                                             context,
                                             MaterialPageRoute(
                                               builder: (context) => PlayVideo(
-                                                  snapshot.data!.slug,"",0),
+                                                  snapshot.data!.slug, "", 0),
                                             ),
                                           ),
                                         )),
@@ -169,7 +188,8 @@ class _DetailMoiveScreens extends State<DetailMoiveScreens> {
                                   SizedBox(
                                     height: 8,
                                   ),
-                                  (listLink!.length > 1 && snapshot.data!.type!="single")
+                                  (listLink!.length > 1 &&
+                                          snapshot.data!.type != "single")
                                       ? SizedBox(
                                           height: 40,
                                           child: ListView.builder(
@@ -183,32 +203,38 @@ class _DetailMoiveScreens extends State<DetailMoiveScreens> {
                                                   padding:
                                                       const EdgeInsets.all(3),
                                                   child: Container(
-                                                    
                                                     color: Colors.grey.shade900,
                                                     child: InkWell(
                                                         focusColor: Colors
                                                             .grey.shade300,
                                                         onTap: () {
                                                           Navigator.push(
-                                            context,
-                                                          MaterialPageRoute(
-                                              builder: (context) => PlayVideo(
-                                                  snapshot.data!.slug,listLink![index].link_m3u8,index),
-                                            ));
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) => PlayVideo(
+                                                                    snapshot
+                                                                        .data!
+                                                                        .slug,
+                                                                    listLink![
+                                                                            index]
+                                                                        .link_m3u8,
+                                                                    index),
+                                                              ));
                                                         },
                                                         child: Ink(
                                                             padding:
                                                                 const EdgeInsets
                                                                     .all(8.0),
-                                                            child: Text(
-                                                                (index+1).toString()))),
+                                                            child: Text((index +
+                                                                    1)
+                                                                .toString()))),
                                                   ),
                                                 );
                                               }))
                                       : SizedBox(),
                                   SizedBox(
                                     height: 8,
-                                  ),    
+                                  ),
                                   Text(
                                     'Nội dung',
                                     style: GoogleFonts.openSans(
@@ -275,7 +301,13 @@ class _DetailMoiveScreens extends State<DetailMoiveScreens> {
                   ),
                 );
               } else {
-                return const Center(child: CircularProgressIndicator());
+                return Center(
+                  child: JumpingDots(
+                      color: Colors.yellow,
+                      radius: 10,
+                      numberOfDots: 3,
+                      animationDuration: Duration(milliseconds: 200)),
+                );
               }
             }));
   }

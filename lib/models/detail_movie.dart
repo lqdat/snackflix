@@ -1,10 +1,16 @@
 class ServerData {
   String link_embed;
   String link_m3u8;
-  ServerData({required this.link_embed, required this.link_m3u8});
+  String name;
+  String filename;
+  ServerData({required this.filename,required this.name, required this.link_embed, required this.link_m3u8});
   factory ServerData.fromJson(Map<String, dynamic> json) {
     ServerData res = ServerData(
-        link_embed: json['link_embed'], link_m3u8: json['link_m3u8']);
+        link_embed: json['link_embed'],
+         link_m3u8: json['link_m3u8'],
+         filename:  json['filename'],
+         name:json['name']
+         );
     return res;
   }
 }
