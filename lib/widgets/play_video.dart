@@ -185,7 +185,7 @@ class _PlayVideoState extends State<PlayVideo> {
             Container(
               height: 70,
               width: 70,
-              margin: const EdgeInsets.only(top: 16, left: 16),
+              
               decoration: BoxDecoration(
                   color: Colours.scaffoldBGColor,
                   borderRadius: BorderRadius.circular(8)),
@@ -208,7 +208,7 @@ class _PlayVideoState extends State<PlayVideo> {
               ),
             ),
             Container(
-              margin: const EdgeInsets.only(top: 14),
+            
               child: ListLinks != null
                   ? Text('${ListLinks![widget.episode].name}')
                   : Text(''),
